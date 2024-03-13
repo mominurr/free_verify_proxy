@@ -1,12 +1,12 @@
 free_verify_proxy
 ===========
 
-free_verify_proxy is a Python library that collects free proxy different source and verify whether a proxys is working or not. It checks the functionality of a given proxys by making requests to various proxy detection servers. This library is useful for anyone who needs to ensure the reliability of proxys for their applications.
+free_verify_proxy is a Python library that collects free proxy from different sources and verifies whether the proxy is working or not. It checks the functionality of given proxies by making requests to various proxy detection servers. This library is useful for anyone who needs to ensure the reliability of proxies for their applications.
 
 Installation
 ------------
 
-You can install free_proxy_verifyer via pip:
+You can install free_verify_proxy via pip:
 
 `pip install free_verify_proxy`
 
