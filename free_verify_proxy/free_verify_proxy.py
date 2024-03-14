@@ -45,7 +45,7 @@ class VerifyProxyLists:
         """
         proxy_lists = proxyLists().get_free_proxy_lists()
         verified_proxies = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads+1) as executor:
             futures = []
             chunk_size = len(proxy_lists) // number_of_threads
             for i in range(0, len(proxy_lists), chunk_size):
