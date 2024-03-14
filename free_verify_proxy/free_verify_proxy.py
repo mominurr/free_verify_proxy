@@ -38,13 +38,13 @@ class VerifyProxyLists:
     def get_verifyProxyLists(self, number_of_threads=100, timeout=(5, 5)):
         """
         Args:
-            number_of_threads (int, optional): Number of threads to use for verification. Defaults to 50.
+            number_of_threads (int, optional): Number of threads to use for verification. Defaults to 100.
 
             timeout (tuple, optional): Timeout for proxy verification. Defaults to (5,5).
             
         """
         proxy_lists = proxyLists().get_free_proxy_lists()
-
+        verified_proxies = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads) as executor:
             futures = []
             chunk_size = len(proxy_lists) // number_of_threads
@@ -53,9 +53,11 @@ class VerifyProxyLists:
                 future = executor.submit(self.verifyer, chunk, timeout)
                 futures.append(future)
 
-            verified_proxies = []
             for future in concurrent.futures.as_completed(futures):
-                verified_proxies.extend(future.result())
+                try:
+                    verified_proxies.extend(future.result())
+                except:
+                    pass
 
         return verified_proxies
 
