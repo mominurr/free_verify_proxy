@@ -1,5 +1,5 @@
-from free_proxy_verifyer import proxyVerify
-from proxy import proxyLists
+from .free_proxy_verifyer import proxyVerify
+from .proxy import proxyLists
 import concurrent.futures
 
 class VerifyProxyLists:
