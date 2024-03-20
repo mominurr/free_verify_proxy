@@ -65,7 +65,7 @@ When installing free_verify_proxy using pip, the necessary dependencies (request
 ```
 from free_verify_proxy import VerifyProxyLists
 
-verify_proxy_lists = VerifyProxyLists().get_verifyProxyLists()
+verify_proxy_lists = VerifyProxyLists().get_verifyProxyLists(number_of_threads=100, timeout=(5,5))
 
 print(verify_proxy_lists)
 
