@@ -27,6 +27,8 @@ class proxyVerify:
             "https://jsonip.com/",
             "https://api.seeip.org/jsonip",
             "https://ip.smartproxy.com/json",
+            "https://ip-api.com/",
+            "https://ip.nf/me.json"
         ]
         self.url=None
 

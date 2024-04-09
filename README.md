@@ -40,6 +40,8 @@ free_verify_proxy is a Python library that collects free proxy from different so
 - [jsonip.com](https://jsonip.com/)
 - [SeeIP](https://api.seeip.org/jsonip)
 - [SmartProxy](https://ip.smartproxy.com/json)
+- [ip-api.com](https://ip-api.com/)
+- [ip.nf](https://ip.nf/me.json)
 
 
 
