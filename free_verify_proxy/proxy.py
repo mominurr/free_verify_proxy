@@ -62,10 +62,9 @@ class proxyLists:
                     if len(columns_1)>=8:
                         proxy=f"{columns_1[0].text.strip()}:{columns_1[1].text.strip()}"
                         proxies_list.append(proxy)
-                page+=1
             except:
                 pass
-
+            page+=1
         return proxies_list
 
 
