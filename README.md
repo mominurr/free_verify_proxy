@@ -1,9 +1,19 @@
-# free_verify_proxy
+# Free Verify Proxy
 
-free_verify_proxy is a Python library that collects free proxy from different sources and verifies whether the proxy is working or not. It checks the functionality of given proxies by making requests to various proxy detection servers. This library is useful for anyone who needs to ensure the reliability of proxies for their applications.
+`free_verify_proxy` is a Python library that collects free proxies from various sources and verifies whether they are functional. It checks the reliability of proxies by making requests to multiple proxy detection servers. This library is useful for developers, researchers, and web scrapers who need working proxies for their applications.
 
-# NOTE:
-if collected proxy lists are smaller than number_of_threads then it is not verified proxy lists. Just return collected proxy lists.
+## Features
+
+- Scrapes free proxies from multiple public proxy lists.
+
+- Supports filtering proxies based on country, protocol, and anonymity level.
+
+- Multi-threaded proxy verification for high performance.
+
+- Uses multiple proxy judge URLs for accurate testing.
+
+- Returns a verified list of working proxies.
+
 
 # Proxy Sources
 
@@ -17,9 +27,8 @@ if collected proxy lists are smaller than number_of_threads then it is not verif
 - [FreeProxy World](https://www.freeproxy.world)
 - [ProxyScrape](https://proxyscrape.com/free-proxy-list)
 - [Proxy List Download](https://www.proxy-list.download/)
-- [Anonymouse](https://anonymouse.cz/proxy-list/)
+- [Geonode Proxy](https://geonode.com/free-proxy-list)
 - [IP Royal](https://iproyal.com/free-proxy-list)
-- [HideMy](https://hidemy.io/en/proxy-list/)
 - [ProxyDB](https://proxydb.net/list)
 - [Advanced Name](https://advanced.name/freeproxy?type=http)
 - [Free Proxy List CC](https://freeproxylist.cc/servers)
@@ -46,13 +55,14 @@ if collected proxy lists are smaller than number_of_threads then it is not verif
 - [ip.nf](https://ip.nf/me.json)
 
 
+**Note:** The library uses many more proxy judges for better accuracy, ensuring reliable proxy verification.
 
 # Installation
 
 You can install free_verify_proxy via pip:
 
 ```
-pip install free_verify_proxy
+pip install free-verify-proxy
 ```
 
 or
@@ -61,21 +71,100 @@ or
 pip install git+https://github.com/mominurr/free_verify_proxy.git
 ```
 
-When installing free_verify_proxy using pip, the necessary dependencies (requests and beautifulsoup4) will be automatically installed along with the package. You don't need to separately install these dependencies.
+When installing free_verify_proxy using pip, the necessary dependencies (requests, curl_cffi, country_converter and beautifulsoup4) will be automatically installed along with the package. You don't need to separately install these dependencies.
 
 
-# Usage
+# Usage:
 
-```
+## Parameters
+
+- **`countryCodes`** (*list, optional*):  
+  A list of country codes (ISO 3166-1 alpha-2 format) to filter proxies by location.  
+  **Example:** `["US", "IE", "FR"]`  
+  **Default:** `["all"]` (Includes proxies from all countries).
+
+- **`excludedCountries`** (*list, optional*):  
+  A list of country codes to exclude from the proxy list.  
+  **Example:** `["US", "CN"]`  
+  **Default:** `[]` (No exclusion).
+
+- **`protocols`** (*list, optional*):  
+  A list of protocols to filter proxies by supported protocol type.  
+  **Supported values:** `["http", "https", "socks4", "socks5"]`  
+  **Example:** `["http"]`  
+  **Default:** `["all"]` (Includes all protocol types).
+
+- **`anonymityLevels`** (*list, optional*):  
+  A list of anonymity levels to filter proxies by their anonymity.  
+  **Supported values:** `["transparent", "anonymous", "high", "elite"]`  
+  **Example:** `["elite", "anonymous"]`  
+  **Default:** `["all"]` (Includes all anonymity levels).
+
+- **`number_of_threads`** (*int, optional*):  
+  Number of threads to use for parallel proxy verification.  
+  **Default:** `100`.
+
+- **`timeout`** (*tuple, optional*):  
+  A timeout (connect, read) in seconds for proxy verification.  
+  **Example:** `(5, 5)` (5-second timeout for connection and read).  
+  **Default:** `(5, 5)`.
+
+
+## Default Case (No Filters Applied):
+
+If you don't need to apply any filters and want to retrieve and verify proxies from all countries, protocols, and anonymity levels, simply call the method without any arguments:
+
+```python
 from free_verify_proxy import VerifyProxyLists
 
-verify_proxy_lists = VerifyProxyLists().get_verifyProxyLists(number_of_threads=100, timeout=(5,5))
+# Instantiate the VerifyProxyLists class
+verify_proxy_lists = VerifyProxyLists()
 
-print(verify_proxy_lists)
+# Retrieve the verified proxy list with no filters (includes all proxies)
+verified_proxies = verify_proxy_lists.get_verifyProxyLists()
 
-['85.62.218.250:3128','45.144.65.8:4444','103.153.154.6:80',.........................,'38.156.233.78:999']
+# Print the list of verified proxies
+print(verified_proxies)
 
+# Example Output:
+[
+    {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
+    {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'high'},
+    ...
+]
 ```
+
+## Custom Case (With Filters Applied):
+
+You can also customize the filters to narrow down the list of proxies. Below is an example of how to filter proxies by country code, protocol, anonymity level, and more:
+
+```python
+from free_verify_proxy import VerifyProxyLists
+
+# Instantiate the VerifyProxyLists class
+verify_proxy_lists = VerifyProxyLists()
+
+# Retrieve the verified proxy list based on specific filters (optional)
+verified_proxies = verify_proxy_lists.get_verifyProxyLists(
+    countryCodes=["US", "FR"],           # Filter proxies by country codes (e.g., "US", "FR")
+    protocols=["http", "https"],         # Filter proxies by protocol (e.g., "http", "https")
+    anonymityLevels=["elite"],           # Filter proxies by anonymity level (e.g., "elite")
+    excludedCountries=["CN"],            # Exclude proxies from specific countries (e.g., "CN")
+    number_of_threads=150,               # Use 150 threads for parallel verification
+    timeout=(5, 5)                       # Set connection and read timeout to 5 seconds
+)
+
+# Print the list of verified proxies
+print(verified_proxies)
+
+# Example Output:
+[
+    {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
+    {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'elite'},
+    ...
+]
+```
+
 
 # Contributing
 

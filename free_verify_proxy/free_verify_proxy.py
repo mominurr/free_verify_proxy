@@ -1,65 +1,171 @@
-from .free_proxy_verifyer import proxyVerify
-from .proxy import proxyLists
+from .proxy_verify import proxyVerify
+from .proxy import ProxyScraper
 import concurrent.futures
 
 class VerifyProxyLists:
     """
-    get verify proxy list. proxy collected from different websites. 
+    This class retrieves proxies from various sources, verifies if they are working, and returns a list of functional proxies.
 
-    after collecting proxy list, verify if the proxy is working or not. 
+    ### Workflow:
 
-    after verification, return the working proxy list.
+    1. **Collect Proxies**: Proxies are collected from different websites.
+    2. **Filter Proxies**: The collected proxy list can be filtered based on various criteria such as country, protocol, anonymity level, and more.
+    3. **Verify Proxies**: Each proxy in the filtered list is verified to check if it is working. The verification happens in parallel using multiple threads for faster results.
+    4. **Return Working Proxies**: The method returns a list of proxies that are confirmed to be working after the verification process.
 
-    usage:
+    ### Usage:
 
-        from free_verify_proxy import VerifyProxyLists
+    #### Default Case (No Filters Applied):
 
-        verify_proxy_lists = VerifyProxyLists().get_verifyProxyLists()
+    If you don't need to apply any filters and want to retrieve and verify proxies from all countries, protocols, and anonymity levels, simply call the method without any arguments:
 
-        print(verify_proxy_lists)
+    ```python
+    from free_verify_proxy import VerifyProxyLists
 
-        ['85.62.218.250:3128','45.144.65.8:4444','103.153.154.6:80',.........................,'38.156.233.78:999']
+    # Instantiate the VerifyProxyLists class
+    verify_proxy_lists = VerifyProxyLists()
 
+    # Retrieve the verified proxy list with no filters (includes all proxies)
+    verified_proxies = verify_proxy_lists.get_verifyProxyLists()
+
+    # Print the list of verified proxies
+    print(verified_proxies)
+
+    # Example Output:
+    [
+        {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
+        {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'high'},
+        ...
+    ]
+    ```
+
+    #### Custom Case (With Filters Applied):
+
+    You can also customize the filters to narrow down the list of proxies. Below is an example of how to filter proxies by country code, protocol, anonymity level, and more:
+
+    ```python
+    from free_verify_proxy import VerifyProxyLists
+
+    # Instantiate the VerifyProxyLists class
+    verify_proxy_lists = VerifyProxyLists()
+
+    # Retrieve the verified proxy list based on specific filters (optional)
+    verified_proxies = verify_proxy_lists.get_verifyProxyLists(
+        countryCodes=["US", "FR"],           # Filter proxies by country codes (e.g., "US", "FR")
+        protocols=["http", "https"],         # Filter proxies by protocol (e.g., "http", "https")
+        anonymityLevels=["elite"],           # Filter proxies by anonymity level (e.g., "elite")
+        excludedCountries=["CN"],            # Exclude proxies from specific countries (e.g., "CN")
+        number_of_threads=150,               # Use 150 threads for parallel verification
+        timeout=(5, 5)                       # Set connection and read timeout to 5 seconds
+    )
+
+    # Print the list of verified proxies
+    print(verified_proxies)
+
+    # Example Output:
+    [
+        {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
+        {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'elite'},
+        ...
+    ]
+    ```
     """
+
     def __init__(self):
         self.checker = proxyVerify()
 
-    def verifyer(self, proxy_list, timeout):
-        verified_list = []
-        for proxy in proxy_list:
-            try:
-                if self.checker.verify_proxy(proxy=proxy, timeout=timeout):
-                    verified_list.append(proxy)
-            except:
-                pass
-        return verified_list
-
-
-    def get_verifyProxyLists(self, number_of_threads=100, timeout=(5, 5)):
+    def get_verifyProxyLists(
+        self,
+        countryCodes=["all"],
+        protocols=["all"],
+        anonymityLevels=["all"],
+        excludedCountries=[],
+        number_of_threads=100,
+        timeout=(5, 5)
+    ):
         """
+        Retrieves and verifies a list of proxies based on specified filters.
+
         Args:
-            number_of_threads (int, optional): Number of threads to use for verification. Defaults to 100.
-
-            timeout (tuple, optional): Timeout for proxy verification. Defaults to (5,5).
+            countryCodes (list, optional): 
+                - A list of country codes (ISO 3166-1 alpha-2 format) to filter proxies by location. 
+                - Example: ["US", "IE", "FR"]
+                - Default: ["all"] (Includes proxies from all countries).
             
-        """
-        proxy_lists = proxyLists().get_free_proxy_lists()
-        if len(proxy_lists) == 0 or number_of_threads+1 > len(proxy_lists):
-            return proxy_lists
-        verified_proxies = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads+1) as executor:
-            futures = []
-            chunk_size = len(proxy_lists) // number_of_threads
-            for i in range(0, len(proxy_lists), chunk_size):
-                chunk = proxy_lists[i:i + chunk_size]
-                future = executor.submit(self.verifyer, chunk, timeout)
-                futures.append(future)
+            excludedCountries (list, optional):
+                - A list of country codes to exclude from the proxy list.
+                - Example: ["US", "CN"]
+                - Default: [] (No exclusion).
 
-            for future in concurrent.futures.as_completed(futures):
+            protocols (list, optional): 
+                - A list of protocols to filter proxies by supported protocol type.
+                - Supported values: ["http", "https", "socks4", "socks5"]
+                - Example: ["http"]
+                - Default: ["all"] (Includes all protocol types).
+
+            anonymityLevels (list, optional): 
+                - A list of anonymity levels to filter proxies by their anonymity.
+                - Supported values: ["transparent", "anonymous", "high", "elite"]
+                - Example: ["elite", "anonymous"]
+                - Default: ["all"] (Includes all anonymity levels).
+
+            number_of_threads (int, optional): 
+                - Number of threads to use for parallel proxy verification.
+                - Default: 100.
+
+            timeout (tuple, optional): 
+                - A timeout (connect, read) in seconds for proxy verification.
+                - Example: (5, 5) means a 5-second timeout for connection and read.
+                - Default: (5, 5).
+        """
+
+        # Get proxy list from ProxyScraper
+        proxy_lists = ProxyScraper().getProxys()
+
+        # Ensure countryCodes is set to ["all"] if it's empty
+        if len(countryCodes) == 0:
+            countryCodes = ["all"]
+
+        # Filter proxies based on excluded countries
+        if excludedCountries:
+            excludedCountries = [country.upper() for country in excludedCountries]
+            proxy_lists = [proxy for proxy in proxy_lists if proxy['countryCode'] not in excludedCountries]
+
+        # Filter proxies based on countryCodes
+        if "all" not in countryCodes:
+            countryCodes = [country.upper() for country in countryCodes]
+            proxy_lists = [proxy for proxy in proxy_lists if proxy['countryCode'] in countryCodes]
+
+        # Filter proxies based on protocols
+        if "all" not in protocols:
+            protocols = [protocol.lower() for protocol in protocols]
+            proxy_lists = [proxy for proxy in proxy_lists if proxy['protocol'] in protocols]
+
+        # Filter proxies based on anonymityLevels
+        if "all" not in anonymityLevels:
+            anonymityLevels = [anonymity.lower() for anonymity in anonymityLevels]
+            proxy_lists = [proxy for proxy in proxy_lists if proxy['anonymityLevel'] in anonymityLevels]
+
+        # If there are no proxies after filtering, return an empty list
+        if len(proxy_lists) == 0:
+            return []
+
+        # Initialize list for verified proxies
+        verified_proxies = []
+
+        # Start concurrent verification using ThreadPoolExecutor
+        with concurrent.futures.ThreadPoolExecutor(max_workers=number_of_threads) as executor:
+            # Start the load operations and mark each future with its proxy dict
+            future_to_proxy = {executor.submit(self.checker.verify_proxy, proxy_dict, timeout): proxy_dict for proxy_dict in proxy_lists}
+            for future in concurrent.futures.as_completed(future_to_proxy):
+                proxy_data = future_to_proxy[future]
                 try:
-                    verified_proxies.extend(future.result())
+                    flag = future.result()
+                    if flag:
+                        verified_proxies.append(proxy_data)
                 except:
                     pass
 
         return verified_proxies
+
 
