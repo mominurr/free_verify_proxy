@@ -33,9 +33,10 @@ class VerifyProxyLists:
 
     # Example Output:
     [
-        {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
-        {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'high'},
+        {'proxy': '3.127.121.101:80', 'countryCode': 'DE', 'protocol': 'http', 'anonymityLevel': 'elite'}, 
+        {'proxy': '13.36.104.85:80', 'countryCode': 'FR', 'protocol': 'http', 'anonymityLevel': 'elite'},
         ...
+        {'proxy': '15.236.106.236:3128', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'high anonymous'}
     ]
     ```
 
@@ -64,9 +65,10 @@ class VerifyProxyLists:
 
     # Example Output:
     [
-        {'ip': '85.62.218.250', 'port': '3128', 'countryCode': 'US', 'protocol': 'http', 'anonymityLevel': 'elite'},
-        {'ip': '45.144.65.8', 'port': '4444', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'elite'},
+        {'proxy': '3.127.121.101:80', 'countryCode': 'DE', 'protocol': 'http', 'anonymityLevel': 'elite'}, 
+        {'proxy': '13.36.104.85:80', 'countryCode': 'FR', 'protocol': 'http', 'anonymityLevel': 'elite'},
         ...
+        {'proxy': '15.236.106.236:3128', 'countryCode': 'FR', 'protocol': 'https', 'anonymityLevel': 'high anonymous'}
     ]
     ```
     """
@@ -99,7 +101,7 @@ class VerifyProxyLists:
 
             protocols (list, optional): 
                 - A list of protocols to filter proxies by supported protocol type.
-                - Supported values: ["http", "https", "socks4", "socks5"]
+                - Supported values: ["http", "https"]
                 - Example: ["http"]
                 - Default: ["all"] (Includes all protocol types).
 
