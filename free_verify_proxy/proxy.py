@@ -26,17 +26,13 @@ class ProxyScraper:
                 "chrome124",
                 "chrome131",
                 "chrome133a",
-                "chrome99_android",
-                "chrome131_android"
                 "edge99",
                 "edge101",
                 "safari",
                 "safari15_3",
                 "safari15_5",
                 "safari17_0",
-                "safari17_2_ios",
                 "safari18_0",
-                "safari18_0_ios",
                 "firefox133",
                 "firefox135"
             ]

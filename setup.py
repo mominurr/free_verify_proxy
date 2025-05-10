@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='free_verify_proxy',
-    version='2.0.1',
+    version='2.0.2',
     author='Mominur Rahman',
     author_email='mominurr518@email.com',
     description='A simple package to provide http and https working proxy lists.',

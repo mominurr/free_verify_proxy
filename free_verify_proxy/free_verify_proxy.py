@@ -170,4 +170,3 @@ class VerifyProxyLists:
 
         return verified_proxies
 
-
