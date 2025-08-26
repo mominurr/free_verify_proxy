@@ -33,6 +33,11 @@
 - [Advanced Name](https://advanced.name/freeproxy?type=http)
 - [Free Proxy List CC](https://freeproxylist.cc/servers)
 - [Proxy Site List](https://proxysitelist.net/)
+- [Databay](https://databay.com/free-proxy-list)
+- [Lumiproxy](https://www.lumiproxy.com/free-proxy/)
+- [Proxylister](https://proxylister.com/countries/oceania/australia/)
+- [Freeproxyupdate](https://freeproxyupdate.com/australia-au/https-ssl)
+- [Proxy5](https://proxy5.net/free-proxy/australia)
 
 
 

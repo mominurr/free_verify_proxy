@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup as bs
 import concurrent.futures
 import base64,random
 import country_converter as coco
+import warnings
+warnings.filterwarnings("ignore")
 
 class ProxyScraper:
     """
@@ -394,12 +396,128 @@ class ProxyScraper:
 
         return proxy_lists
 
+    
+    def get_databay_proxys(self):
+        url = "https://databay.com/free-proxy-list"
+        proxy_lists = []
+        try:
+            response = curl_cffi.get(url, impersonate=random.choice(self.BrowserNames), timeout=(10, 10))
+            tr_tag_lists = bs(response.content, 'html.parser').find('table').find('tbody').find_all('tr')
+            for tr_tag in tr_tag_lists:
+                try:
+                    td_tags = tr_tag.find_all('td')
+                    proxy = f"{td_tags[0].text.strip()}:{td_tags[1].text.strip()}"
+                    protocol = td_tags[3].text.strip()
+                    countryCode = coco.convert(names=td_tags[2].text.strip(), to='ISO2')
+                    if "http" in protocol.lower() or "https" in protocol.lower():
+                        proxy_lists.append({"proxy": proxy, "countryCode": countryCode.upper(), "protocol": protocol.lower(), "anonymityLevel":"unknown"})
+                except:
+                    pass
+        except:
+            pass
+        
+        return proxy_lists
+
+
+    def get_lumiproxy_proxys(self):
+        url = "https://api.lumiproxy.com/web_v1/free-proxy/list?page_size=2000&page=1&language=en-us"
+        proxy_lists = []
+        try:
+            response = curl_cffi.get(url, impersonate=random.choice(self.BrowserNames), timeout=(10, 10))
+            json_data_lists = response.json()['data']['list']
+            for data in json_data_lists:
+                try:
+                    proxy = f"{data['ip']}:{data['port']}"
+                    countryCode = data["country_code"]
+                    if data['protocol'] == 1:
+                        protocol = "http"
+                    elif data['protocol'] == 2:
+                        protocol = "https"
+                    else:
+                        continue
+                    anonymity = data["anonymity"]
+                    if anonymity == 0:
+                        anonymityLevel = "transparent"
+                    elif anonymity == 1:
+                        anonymityLevel = "anonymous"
+                    elif anonymity == 2:
+                        anonymityLevel = "elite"
+                    else:
+                        anonymityLevel = "unknown"
+                    proxy_lists.append({"proxy": proxy, "countryCode": countryCode.upper(), "protocol": protocol, "anonymityLevel": anonymityLevel})
+                except:
+                    pass
+        except:
+            pass
+        return proxy_lists
+    
+
+    def get_australian_proxys(self):
+        url1 = "https://proxylister.com/countries/oceania/australia/"
+        proxy_lists = []
+        try:
+            response = curl_cffi.get(url1, impersonate=random.choice(self.BrowserNames), timeout=(10, 10))
+            tr_tag_lists = bs(response.content, 'html.parser').find('table', attrs={"id": "proxylister-table"}).find('tbody').find_all('tr')
+            for tr_tag in tr_tag_lists:
+                try:
+                    td_tags = tr_tag.find_all('td')
+                    proxy = f"{td_tags[0].text.strip()}:{td_tags[1].text.strip()}"
+                    protocol = td_tags[2].text.strip()
+                    countryCode = "AU"
+                    anonymityLevel = td_tags[3].text.strip()
+                    if "http" in protocol.lower() or "https" in protocol.lower():
+                        proxy_lists.append({"proxy": proxy, "countryCode": countryCode.upper(), "protocol": protocol, "anonymityLevel": anonymityLevel.lower()})
+                except:
+                    pass
+        except:
+            pass
+
+
+        url2 = "https://freeproxyupdate.com/australia-au/https-ssl"
+        try:
+            response2 = curl_cffi.get(url2, impersonate=random.choice(self.BrowserNames), timeout=(10, 10))
+            tr_tag_lists = bs(response2.content, 'html.parser').find('table', attrs={"class": "list-proxy"}).find('tbody').find_all('tr')
+            for tr_tag in tr_tag_lists:
+                try:
+                    td_tags = tr_tag.find_all('td')
+                    proxy = f"{td_tags[0].text.strip()}:{td_tags[1].text.strip()}"
+                    protocol = "https"
+                    countryCode = "AU"
+                    anonymityLevel = td_tags[4].text.strip()
+                    proxy_lists.append({"proxy": proxy, "countryCode": countryCode.upper(), "protocol": protocol, "anonymityLevel": anonymityLevel.lower()})
+                except:
+                    pass
+        except:
+            pass
+
+
+        url3 = "https://proxy5.net/free-proxy/australia"
+        try:
+            response3 = curl_cffi.get(url3, impersonate=random.choice(self.BrowserNames), timeout=(10, 10))
+            tr_tag_lists = bs(response3.content, 'html.parser').find('table', attrs={"id": "proxylister-table"}).find('tbody').find_all('tr')
+            for tr_tag in tr_tag_lists:
+                try:
+                    td_tags = tr_tag.find_all('td')
+                    proxy = f"{td_tags[0].text.strip()}:{td_tags[1].text.strip()}"
+                    protocol = td_tags[2].text.strip()
+                    countryCode = "AU"
+                    anonymityLevel = td_tags[3].text.strip()
+                    if "http" in protocol.lower() or "https" in protocol.lower():
+                        proxy_lists.append({"proxy": proxy, "countryCode": countryCode.upper(), "protocol": protocol, "anonymityLevel": anonymityLevel.lower()})
+                except:
+                    pass
+        except:
+            pass
+
+
+        return proxy_lists 
+
 
 
     # collect all sources free proxy 
     def getProxys(self):
         proxy_lists = []
-        function_list = [self.get_free_proxy, self.get_freeproxie_world, self.get_proxyscrape, self.get_proxy_list,self.get_iproyal_proxy,self.get_proxydb_proxy,self.get_advanced_proxy,self.get_freeproxylist_cc_proxy,self.get_proxysitelist_proxy]
+        function_list = [self.get_free_proxy, self.get_freeproxie_world, self.get_proxyscrape, self.get_proxy_list,self.get_iproyal_proxy,self.get_proxydb_proxy,self.get_advanced_proxy,self.get_freeproxylist_cc_proxy,self.get_proxysitelist_proxy,self.get_databay_proxys,self.get_lumiproxy_proxys,self.get_geonode_proxy,self.get_australian_proxys]
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit tasks to the thread pool
@@ -430,6 +548,7 @@ class ProxyScraper:
 #     proxy_instance = ProxyScraper()  # Create an instance
 #     unique_proxies = proxy_instance.getProxys()  # Call the method
 
+#     # unique_proxies = proxy_instance.get_australian_proxys()
 
 #     print("Unique proxies:", len(unique_proxies))
 
