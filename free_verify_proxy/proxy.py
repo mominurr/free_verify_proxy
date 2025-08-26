@@ -1,4 +1,4 @@
-from curl_cffi import requests
+import curl_cffi
 from bs4 import BeautifulSoup as bs
 import concurrent.futures
 import base64,random
@@ -39,10 +39,10 @@ class ProxyScraper:
 
     def get_free_proxy(self):
         proxies_list=[]
-        url_lists=["https://www.sslproxies.org/","https://free-proxy-list.net","https://www.us-proxy.org/","https://free-proxy-list.net/uk-proxy.html","https://free-proxy-list.net/anonymous-proxy.html"]
+        url_lists=["https://www.sslproxies.org/","https://free-proxy-list.net","https://www.us-proxy.org/","https://free-proxy-list.net/uk-proxy.html","https://free-proxy-list.net/anonymous-proxy.html","https://free-proxy-list.net/en/google-proxy.html"]
         for url in url_lists:
             try:
-                response = requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+                response = curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
                 table_html = bs(response.text, 'html.parser').find('div',attrs={'class':'table-responsive fpl-list'})
                 table = table_html.find('table')
@@ -84,7 +84,7 @@ class ProxyScraper:
         while page<=5:
             try:
                 url= f'https://www.freeproxy.world/?type=http&anonymity=4&country=&speed=&port=&page={page}'
-                response = requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+                response = curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
                 table = bs(response.content, 'html.parser').find('table',attrs={'class':'layui-table'})
                 tbody=table.find('tbody')
                 try:
@@ -122,7 +122,7 @@ class ProxyScraper:
         while page<=5:
             try:
                 url= f'https://www.freeproxy.world/?type=https&anonymity=4&country=&speed=&port=&page={page}'
-                response = requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+                response = curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
                 table = bs(response.content, 'html.parser').find('table',attrs={'class':'layui-table'})
                 tbody=table.find('tbody')
                 try:
@@ -159,9 +159,9 @@ class ProxyScraper:
     def get_proxyscrape(self):
         proxies_list=[]
         try:
-            url="https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&protocol=http&country=all&anonymity=elite&timeout=10000&proxy_format=ipport&format=json"
+            url="https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&country=all&anonymity=elite&timeout=10000&proxy_format=ipport&format=json"
 
-            response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
             proxies_json_data=response.json()['proxies']
 
@@ -172,6 +172,7 @@ class ProxyScraper:
         except:
             pass
 
+
         return proxies_list
 
 
@@ -180,7 +181,7 @@ class ProxyScraper:
         try:
             url="https://www.proxy-list.download/api/v2/get?l=en&t=http"
 
-            response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
             proxies_json_data=response.json()['LISTA']
 
@@ -193,7 +194,7 @@ class ProxyScraper:
         try:
             url="https://www.proxy-list.download/api/v2/get?l=en&t=https"
 
-            response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
             proxies_json_data=response.json()['LISTA']
 
@@ -210,9 +211,9 @@ class ProxyScraper:
     def get_geonode_proxy(self):
         proxies_list=[]
         try:
-            url="https://proxylist.geonode.com/api/proxy-list?protocols=http%2Chttps&limit=500&page=1&sort_by=lastChecked&sort_type=desc"
+            url="https://proxylist.geonode.com/api/proxy-list?protocols=http%2Chttps&filterLastChecked=5&speed=fast&limit=500&page=1&sort_by=lastChecked&sort_type=desc"
 
-            response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
             proxies_json_data=response.json()['data']
 
@@ -231,7 +232,7 @@ class ProxyScraper:
         while page<=5:
             try:
                 url=f"https://iproyal.com/free-proxy-list/?page={page}&entries=100"
-                response = requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+                response = curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
                 div_tag_lists=bs(response.content, 'html.parser').find('div',attrs={'class':'shadow-s'}).find_all('div',recursive=False)[1:]
                 if len(div_tag_lists)==0:
                     break
@@ -257,7 +258,7 @@ class ProxyScraper:
     #     for i in range(0,640,64):
     #         url = f"https://hidemy.io/en/proxy-list/?type=hs&anon=34&start={i}#list"
     #         try:
-    #             response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+    #             response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
     #             print(response.status_code)
     #             tr_tag_lists=bs(response.content, 'html.parser').find('table').find('tbody').find_all('tr')
     #             for tr_tag in tr_tag_lists:
@@ -293,7 +294,7 @@ class ProxyScraper:
                 "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
             }
             try:
-                response=requests.post(url,json=payload_data,headers=proxydb_headers,timeout=(10,10))
+                response=curl_cffi.post(url,json=payload_data,headers=proxydb_headers,timeout=(10,10))
                 json_data_lists=response.json()["proxies"]
                 for data in json_data_lists:
                     types=data['type']
@@ -323,7 +324,7 @@ class ProxyScraper:
         proxy_lists=[]
         try:
             url="https://advanced.name/freeproxy?type=http"
-            response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
             tr_tag_lists=bs(response.content, 'html.parser').find('table',attrs={"id":"table_proxies"}).find('tbody').find_all('tr')
             for tr_tag in tr_tag_lists:
                 td_tags=tr_tag.find_all('td')
@@ -348,7 +349,7 @@ class ProxyScraper:
         while page<=5:
             url=f"https://freeproxylist.cc/servers/{page}.html"
             try:
-                response=requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+                response=curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
                 tr_tag_lists=bs(response.content, 'html.parser').find('table',attrs={"id":"proxylisttable"}).find('tbody').find_all('tr')
                 for tr_tag in tr_tag_lists:
                     try:
@@ -375,16 +376,16 @@ class ProxyScraper:
         proxy_lists=[]
         try:
             url="https://proxysitelist.net/"
-            response = requests.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
+            response = curl_cffi.get(url,impersonate=random.choice(self.BrowserNames),timeout=(10,10))
 
             li_tag_lists=bs(response.content, 'html.parser').find_all('tr')[1:]
             for li_tag in li_tag_lists:
                 try:
                     td_tags=li_tag.find_all('td')
-                    proxy=f"{td_tags[0].text.strip()}:{td_tags[1].text.strip()}"
-                    protocol = td_tags[2].text.strip()
-                    countryCode=td_tags[3].text.strip()
-                    anonymityLevel = td_tags[4].text.strip()
+                    proxy=td_tags[0].text.strip()
+                    protocol = td_tags[9].text.strip()
+                    countryCode=td_tags[22].text.strip()
+                    anonymityLevel = td_tags[3].text.strip()
                     proxy_lists.append({"proxy":proxy,"countryCode":countryCode.upper(),"protocol":protocol,"anonymityLevel":anonymityLevel.lower()})
                 except:
                     pass
@@ -428,6 +429,7 @@ class ProxyScraper:
 # if __name__=="__main__":
 #     proxy_instance = ProxyScraper()  # Create an instance
 #     unique_proxies = proxy_instance.getProxys()  # Call the method
+
 
 #     print("Unique proxies:", len(unique_proxies))
 
